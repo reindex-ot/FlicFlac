@@ -96,7 +96,7 @@ Init:
   IniRead IniMp3VbrRate,  %IniFile%, MP3, VBRRate, 32-320
   IniRead MP3Presets,     %IniFile%, MP3, Presets, % "Normal:CBR:128,CD Quality:CBR:192,Studio Quality:CBR:320,Normal VBR:VBR:4:32-320,High Quality VBR:VBR:2:64-320"
   StringSplit IniMp3VbrRate, IniMp3VbrRate, -
-  MP3Presets := "Custom:" . EncMode . ":" . ( EncMode = "CBR" ? IniMp3Kbps : IniMp3VbrLevel . ":" . IniMp3VbrRate ) . ( MP3Presets <> "" ? ",," . MP3Presets : "" )
+  MP3Presets := "カスタム:" . EncMode . ":" . ( EncMode = "CBR" ? IniMp3Kbps : IniMp3VbrLevel . ":" . IniMp3VbrRate ) . ( MP3Presets <> "" ? ",," . MP3Presets : "" )
   
   IniRead IniOggQuality,   %IniFile%, OGG, Quality, 5
   
@@ -175,7 +175,7 @@ Main:
   InFormats     := "FLAC|WAV|MP3|OGG|APE|M4A|AAC"
   OutFormats    := "FLAC|WAV|MP3|OGG|APE"
   InExtensions  := "[wav][mp3][ogg][ape][m4a][aac]|[flac][mp3][ogg][ape][m4a][aac]|[wav][flac][ogg][ape][mp3][m4a][aac]|[wav][flac][mp3][ape][m4a][aac]|[wav][flac][mp3][ogg][m4a][aac]"
-  InFileFilters := "Audio to FLAC (*.wav; *.mp3; *.ogg; *.ape; *.m4a; *.aac)|Audio to WAV (*.flac; *.mp3; *.ogg; *.ape; *.m4a; *.aac)|Audio to MP3 (*.wav; *.flac; *.ogg; *.mp3; *.ape; *.m4a; *.aac)|Audio to OGG (*.wav; *.flac; *.mp3; *.ape; *.m4a; *.aac)|Audio to APE (*.wav; *.flac; *.mp3; *.ogg; *.m4a; *.aac)"
+  InFileFilters := "FLAC に変換 (*.wav; *.mp3; *.ogg; *.ape; *.m4a; *.aac)|WAV に変換に変換 (*.flac; *.mp3; *.ogg; *.ape; *.m4a; *.aac)|MP3 に変換 (*.wav; *.flac; *.ogg; *.mp3; *.ape; *.m4a; *.aac)|OGG に変換 (*.wav; *.flac; *.mp3; *.ape; *.m4a; *.aac)|APE に変換 (*.wav; *.flac; *.mp3; *.ogg; *.m4a; *.aac)"
   
   StringSplit OutFormat, OutFormats, |
   StringSplit InFileFilter, InFileFilters, |
@@ -192,22 +192,22 @@ Main:
   Gui Margin, 4,4
   Gui +OwnDialogs
   Gui Color, EEEEEE,DDDDDD
-  Gui Font, s10, MS Sans Serif
-  Gui Add, Button, %FlatButtons% w110 h136 section Default vGuiMainBtn gSelectFilesBtn, % "&Select or`nDrop Files"
-  Gui Font, s9 
-  Gui Add, Radio, %FlatButtons% +0x1000 x+4 yp w70 h24 -Wrap Checked vGuiOutFormat, % "to &" . OutFormat1
-  Gui Add, Radio, %FlatButtons% +0x1000 wp hp -Wrap                         , % "to &" . OutFormat2
-  Gui Add, Radio, %FlatButtons% +0x1000 wp hp -Wrap                         , % "to &" . OutFormat3
-  Gui Add, Radio, %FlatButtons% +0x1000 wp hp -Wrap                         , % "to &" . OutFormat4
-  Gui Add, Radio, %FlatButtons% +0x1000 wp hp -Wrap                         , % "to &" . OutFormat5
-  Gui Font, s9
+  Gui Font, s9, MS Shell Dlg 2
+  Gui Add, Button, %FlatButtons% w110 h136 section Default vGuiMainBtn gSelectFilesBtn, % "ファイルを選択`nまたはドロップ(&S)"
+  Gui Font, s8 
+  Gui Add, Radio, %FlatButtons% +0x1000 x+4 yp w70 h24 -Wrap Checked vGuiOutFormat, % "変換: &" . OutFormat1
+  Gui Add, Radio, %FlatButtons% +0x1000 wp hp -Wrap                         , % "変換: &" . OutFormat2
+  Gui Add, Radio, %FlatButtons% +0x1000 wp hp -Wrap                         , % "変換: &" . OutFormat3
+  Gui Add, Radio, %FlatButtons% +0x1000 wp hp -Wrap                         , % "変換: &" . OutFormat4
+  Gui Add, Radio, %FlatButtons% +0x1000 wp hp -Wrap                         , % "変換: &" . OutFormat5
+  Gui Font, s8
   Gui Add, Progress, xs w184 h8 vGuiProgress cBlack BackgroundCCCCCC   , 0
   
-  Gui Add, Checkbox, h16 wp-38 section checked%GuiDeleteInput% vGuiDeleteInput   , &Delete input file
-  Gui Add, Checkbox, hp wp checked%GuiAlwaysOnTop% vGuiAlwaysOnTop gToggleOnTop , &Always on top
-  Gui Font, s12, Webdings
+  Gui Add, Checkbox, h16 wp-38 section checked%GuiDeleteInput% vGuiDeleteInput   , 入力先のファイルを削除(&D)
+  Gui Add, Checkbox, hp wp checked%GuiAlwaysOnTop% vGuiAlwaysOnTop gToggleOnTop , 常に手前に表示(&A)
+  Gui Font, s11, MS Shell Dlg 2
   Gui Add, Button  , %FlatButtons% x+4 ys w34 h34 gShowMenu, @
-  Gui Font, s9, MS Sans Serif
+  Gui Font, s8, MS Shell Dlg 2
   
   GuiControl ,,% "to &" . OutFormat%SelectedFormat%, 1
   
@@ -327,7 +327,7 @@ ConvertSingleFile( inFileFullName, outFormat ) {
   
   Global TmpFilename, DebugMode
   
-  Result := "Error"
+  Result := "エラー"
   
   SplitPath inFileFullName, Filename, Dir, Extension, NameNoExt, Drive
   If( Dir = "" or Filename = "" or outFormat = "" )
@@ -630,17 +630,17 @@ BuildMenu:
     
   SelectPreset( SelectedPresetNumber )
   
-  Menu, ShellMenu, Add, &Enable, InstallContextMenu
-  Menu, ShellMenu, Add, &Disable, UninstallContextMenu
+  Menu, ShellMenu, Add, 有効化(&E), InstallContextMenu
+  Menu, ShellMenu, Add, 無効化(&D), UninstallContextMenu
 
-  Menu Main, Add, &MP3 Presets, :MP3Menu
+  Menu Main, Add, MP3 のプリセット(&M), :MP3Menu
   Menu Main, Add
-  Menu Main, Add, &Shell Integration, :ShellMenu
-  Menu Main, Add, Open &INI File, OpenINI
+  Menu Main, Add, シェルの統合(&S), :ShellMenu
+  Menu Main, Add, ini ファイルを開く(&I), OpenINI
   Menu Main, Add
   If( FileExist( "Readme.txt" ) )
-    Menu Main, Add, View &Readme File, Readme
-  Menu Main, Add, &About, About
+    Menu Main, Add, README ファイルを表示(&R), Readme
+  Menu Main, Add, バージョン情報(&A), About
 Return
 
 ShowMenu:
@@ -764,7 +764,7 @@ Return
 About:
   Gui 1:+OwnDialogs
   msg = %NameString% v%VersionString%`nby Danny Ben Shitrit`nSector Seven`n`nwww.sector-seven.com  
-  Answer := CMsgBox( "About FlicFlac", msg, "*&Close|&Homepage|&GitHub", "I", 1 )
+  Answer := CMsgBox( "FlicFlac について", msg, "*閉じる(&C)|ホームページ(&H)|GitHub(&G)", "I", 1 )
   
   If( Answer == "Homepage" )
     Run https://www.sector-seven.com/
